@@ -23,3 +23,11 @@ img {
   display: block;
   max-width: 100%;
 }
+
+.load-more {
+  display: none;
+}
+
+.is-visible {
+  display: block;
+}

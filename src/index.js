@@ -10,17 +10,34 @@ const API_KEY = '1424879-278d005ef871cdc02a09416fb';
 
 const searchForm = document.querySelector('#search-form');
 const searchQuery = document.querySelector('input[name="searchQuery"]');
-
 const galleryWrapper = document.querySelector('.gallery');
+const loadMoreBtn = document.querySelector('.load-more');
 
-searchForm.addEventListener('submit', async e => {
+let currentPage = 0;
+let totalPage = 0;
+
+const searchPhotos = (e) => {
   e.preventDefault();
+  galleryWrapper.innerHTML = '';
+  currentPage = 1;
+  loadMoreBtn.classList.remove("is-visible")
+  renderSearchPhotos();
+}
+
+const renderSearchPhotos = async () => {
   try {
     const photos = await fetchPhotos();
     if (photos.hits.length !== 0) {
       // console.log(`Found: ${Photos.totalHits}`)
-      Notify.success(`Hooray! We found ${photos.totalHits} images.`);
+      if (currentPage === 1) {
+        Notify.success(`Hooray! We found ${photos.totalHits} images.`);
+      }      
       renderPhotoListItems(photos.hits);
+      currentPage += 1;
+      console.log(currentPage)
+      if (currentPage > 1) {
+        loadMoreBtn.classList.add("is-visible")
+      }
     } else {
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
@@ -37,12 +54,20 @@ searchForm.addEventListener('submit', async e => {
     Notify.failure('Empty search query. Please enter required images');
     galleryWrapper.innerHTML = '';
   }
-});
+}
 
 const fetchPhotos = async () => {
+  const params = new URLSearchParams({
+    image_type: "photo",
+    orientation: "horizontal",
+    safesearch: "true",
+    per_page: 40,
+    page: currentPage,
+    
+  });
   if (searchQuery.value !== '') {
     const response = await axios.get(
-      `https://pixabay.com/api/?key=${API_KEY}&q=${searchQuery.value}&image_type=photo`
+      `https://pixabay.com/api/?key=${API_KEY}&q=${searchQuery.value}&${params}`
     );
     const responseData = response.data;
     return responseData;
@@ -87,8 +112,8 @@ function renderPhotoListItems(hits) {
       `,
     )
     .join('');
-  galleryWrapper.innerHTML = markup;
-  // galleryWrapper.insertAdjacentHTML('beforeend', markup);
+  // galleryWrapper.innerHTML = markup;
+  galleryWrapper.insertAdjacentHTML('beforeend', markup);
 
   new SimpleLightbox('.gallery a', {
     captionsData: 'alt',
@@ -97,3 +122,5 @@ function renderPhotoListItems(hits) {
   
 }
 
+searchForm.addEventListener('submit', searchPhotos);
+loadMoreBtn.addEventListener('click', renderSearchPhotos);
