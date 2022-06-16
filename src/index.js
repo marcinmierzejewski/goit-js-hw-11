@@ -16,13 +16,13 @@ const loadMoreBtn = document.querySelector('.load-more');
 let currentPage = 0;
 let totalPage = 0;
 
-const searchPhotos = (e) => {
+const searchPhotos = e => {
   e.preventDefault();
   galleryWrapper.innerHTML = '';
   currentPage = 1;
-  loadMoreBtn.classList.remove("is-visible")
+  loadMoreBtn.classList.remove('is-visible');
   renderSearchPhotos();
-}
+};
 
 const renderSearchPhotos = async () => {
   try {
@@ -30,14 +30,19 @@ const renderSearchPhotos = async () => {
     if (photos.hits.length !== 0) {
       // console.log(`Found: ${Photos.totalHits}`)
       if (currentPage === 1) {
-        Notify.success(`Hooray! We found ${photos.totalHits} images.`);
-      }      
-      renderPhotoListItems(photos.hits);
-      currentPage += 1;
-      console.log(currentPage)
-      if (currentPage > 1) {
-        loadMoreBtn.classList.add("is-visible")
+        Notify.success(`Hooray!! We found ${photos.totalHits} images.`);
       }
+      renderPhotoListItems(photos.hits);
+      // currentPage += 1;
+      console.log(currentPage);
+      if (currentPage >= 1) {
+        loadMoreBtn.classList.add('is-visible');
+      }
+      if (Math.ceil(photos.totalHits / 40) === currentPage) {
+        Notify.failure('Nothing else...');
+        loadMoreBtn.classList.remove('is-visible');
+      }
+      currentPage += 1;
     } else {
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
@@ -54,16 +59,15 @@ const renderSearchPhotos = async () => {
     Notify.failure('Empty search query. Please enter required images');
     galleryWrapper.innerHTML = '';
   }
-}
+};
 
 const fetchPhotos = async () => {
   const params = new URLSearchParams({
-    image_type: "photo",
-    orientation: "horizontal",
-    safesearch: "true",
+    image_type: 'photo',
+    orientation: 'horizontal',
+    safesearch: 'true',
     per_page: 40,
     page: currentPage,
-    
   });
   if (searchQuery.value !== '') {
     const response = await axios.get(
@@ -86,12 +90,15 @@ function renderPhotoListItems(hits) {
         views,
         comments,
         downloads,
-      }) => `
+      }) => 
+      `
+      <div class="photo-card">
         <a class="photo-card__item" href="${largeImageURL}">       
           <img 
             class="photo-card__image" 
             src=${webformatURL}          
             alt="${tags}"
+            loading="lazy"
             >
           </a>
         <div class="info">
@@ -107,19 +114,17 @@ function renderPhotoListItems(hits) {
           <p class="info-item">
             <b>Downloads</b>: ${downloads}
           </p>
-        </div> 
-      </div>
-      `,
+        </div>
+        </div>
+      `
     )
     .join('');
   // galleryWrapper.innerHTML = markup;
   galleryWrapper.insertAdjacentHTML('beforeend', markup);
 
   new SimpleLightbox('.gallery a', {
-    captionsData: 'alt',
     captionDelay: 250,
   });
-  
 }
 
 searchForm.addEventListener('submit', searchPhotos);
