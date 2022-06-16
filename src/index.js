@@ -3,6 +3,9 @@ import { Notify } from 'notiflix';
 const axios = require('axios');
 import './css/styles.css';
 
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+
 const API_KEY = '1424879-278d005ef871cdc02a09416fb';
 
 const searchForm = document.querySelector('#search-form');
@@ -16,27 +19,34 @@ searchForm.addEventListener('submit', async e => {
     const photos = await fetchPhotos();
     if (photos.hits.length !== 0) {
       // console.log(`Found: ${Photos.totalHits}`)
-      Notify.success(`Hooray! We found ${photos.totalHits} images.`)
+      Notify.success(`Hooray! We found ${photos.totalHits} images.`);
       renderPhotoListItems(photos.hits);
     } else {
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
+      galleryWrapper.innerHTML = '';
     }
 
     // console.log(Photos)
   } catch (error) {
-    console.log(error.message);
-    console.log('zesrało siię');
+    if (searchQuery.value !== '') {
+      console.log(error.message);
+      console.log('Something WRONG 0_o !?!');
+    }
+    Notify.failure('Empty search query. Please enter required images');
+    galleryWrapper.innerHTML = '';
   }
 });
 
 const fetchPhotos = async () => {
-  const response = await axios.get(
-    `https://pixabay.com/api/?key=${API_KEY}&q=${searchQuery.value}&image_type=photo`
-  );
-  const responseData = response.data;
-  return responseData;
+  if (searchQuery.value !== '') {
+    const response = await axios.get(
+      `https://pixabay.com/api/?key=${API_KEY}&q=${searchQuery.value}&image_type=photo`
+    );
+    const responseData = response.data;
+    return responseData;
+  }
 };
 
 function renderPhotoListItems(hits) {
@@ -51,8 +61,7 @@ function renderPhotoListItems(hits) {
         views,
         comments,
         downloads,
-      }) =>
-        `<div class="photo-card">
+      }) => `
         <a class="photo-card__item" href="${largeImageURL}">       
           <img 
             class="photo-card__image" 
@@ -74,8 +83,17 @@ function renderPhotoListItems(hits) {
             <b>Downloads</b>: ${downloads}
           </p>
         </div> 
-      </div>`
+      </div>
+      `,
     )
     .join('');
   galleryWrapper.innerHTML = markup;
+  // galleryWrapper.insertAdjacentHTML('beforeend', markup);
+
+  new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+    captionDelay: 250,
+  });
+  
 }
+
