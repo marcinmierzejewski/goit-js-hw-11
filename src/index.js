@@ -14,7 +14,6 @@ const galleryWrapper = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
 
 let currentPage = 0;
-let totalPage = 0;
 
 const searchPhotos = e => {
   e.preventDefault();
@@ -28,18 +27,16 @@ const renderSearchPhotos = async () => {
   try {
     const photos = await fetchPhotos();
     if (photos.hits.length !== 0) {
-      // console.log(`Found: ${Photos.totalHits}`)
       if (currentPage === 1) {
         Notify.success(`Hooray!! We found ${photos.totalHits} images.`);
       }
       renderPhotoListItems(photos.hits);
-      // currentPage += 1;
       console.log(currentPage);
       if (currentPage >= 1) {
         loadMoreBtn.classList.add('is-visible');
       }
       if (Math.ceil(photos.totalHits / 40) === currentPage) {
-        Notify.failure('Nothing else...');
+        Notify.failure("We're sorry, but you've reached the end of search results.");
         loadMoreBtn.classList.remove('is-visible');
       }
       currentPage += 1;
@@ -49,15 +46,13 @@ const renderSearchPhotos = async () => {
       );
       galleryWrapper.innerHTML = '';
     }
-
-    // console.log(Photos)
   } catch (error) {
-    if (searchQuery.value !== '') {
+    if (searchQuery.value.trim() !== '') {
       console.log(error.message);
       console.log('Something WRONG 0_o !?!');
-    }
+    } else {
     Notify.failure('Empty search query. Please enter required images');
-    galleryWrapper.innerHTML = '';
+    galleryWrapper.innerHTML = '';}
   }
 };
 
@@ -93,33 +88,34 @@ function renderPhotoListItems(hits) {
       }) => 
       `
       <div class="photo-card">
-        <a class="photo-card__item" href="${largeImageURL}">       
-          <img 
-            class="photo-card__image" 
-            src=${webformatURL}          
-            alt="${tags}"
-            loading="lazy"
-            >
-          </a>
+        <div class="photo-card__item">
+          <a class="photo-card__link" href="${largeImageURL}">       
+            <img 
+              class="photo-card__image" 
+              src=${webformatURL}          
+              alt="${tags}"
+              loading="lazy"
+              >
+            </a>
+          </div>
         <div class="info">
           <p class="info-item">
-            <b>Likes</b>: ${likes}
+            <b>Likes</b> ${likes}
           </p>
           <p class="info-item">
-            <b>Views</b>: ${views}
+            <b>Views</b> ${views}
           </p>
           <p class="info-item">
-            <b>Comments</b>: ${comments}
+            <b>Comments</b> ${comments}
           </p>
           <p class="info-item">
-            <b>Downloads</b>: ${downloads}
+            <b>Downloads</b> ${downloads}
           </p>
         </div>
         </div>
       `
     )
     .join('');
-  // galleryWrapper.innerHTML = markup;
   galleryWrapper.insertAdjacentHTML('beforeend', markup);
 
   new SimpleLightbox('.gallery a', {
