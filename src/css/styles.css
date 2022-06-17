@@ -34,7 +34,7 @@ img {
   text-align: center;
   align-items: center;
   justify-content: center;
-  height: 80px;
+  height: 60px;
   position: fixed;
   top: 0;
   width: 100%;
@@ -45,6 +45,9 @@ img {
 
 .search-form{
   display: flex;
+  justify-content: center;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 1px rgba(48, 48, 48, 0.14),
+    0px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
 .search-form > input {
@@ -78,8 +81,20 @@ img {
   border: none;
   border-radius: 3px;
   color: #ffffff;
-  padding: 10px 15px;
+  /* padding: 10px 15px; */
+  width: 125px;
+  height: 45px;
   font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 1px rgba(0, 0, 0, 0.14),
+    0px 2px 1px rgba(0, 0, 0, 0.2);
+  transition: all 100ms linear;  
+}
+
+.load-more:hover {
+  font-size: 21px;
+  color: #d6d6d6;
+  /* padding: 10px 14px; */
 }
 
 .is-visible {
