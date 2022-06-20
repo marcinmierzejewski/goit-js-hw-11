@@ -6,7 +6,8 @@ const axios = require('axios');
 import { Notify } from 'notiflix';
 
 //styles
-import './css/styles.css';
+import './sass/index.scss';
+// import './css/styles.css';
 
 //Import library to display of large images for a full gallery.
 import SimpleLightbox from 'simplelightbox';
@@ -73,7 +74,7 @@ const fetchPhotos = async () => {
     per_page: 40,
     page: currentPage,
   });
-  if (searchQuery.value !== '') {
+  if (searchQuery.value.trim() !== '') {
     const response = await axios.get(
       `https://pixabay.com/api/?key=${API_KEY}&q=${searchQuery.value}&${params}`
     );
