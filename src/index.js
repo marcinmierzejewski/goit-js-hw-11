@@ -1,23 +1,28 @@
+//Import library to HTTP request
 import axios from 'axios';
-import { Notify } from 'notiflix';
 const axios = require('axios');
+
+//Import library to show notifications
+import { Notify } from 'notiflix';
+
+//styles
 import './css/styles.css';
 
+//Import library to display of large images for a full gallery.
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-
-const API_KEY = '1424879-278d005ef871cdc02a09416fb';
 
 const searchForm = document.querySelector('#search-form');
 const searchQuery = document.querySelector('input[name="searchQuery"]');
 const galleryWrapper = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
 
+let numberOfPicture = 0;
 let currentPage = 0;
 let totalHits = 0;
-
 let lightBox = new SimpleLightbox('.gallery a');
 
+//Function to search request photo
 const searchPhotos = e => {
   e.preventDefault();
   galleryWrapper.innerHTML = '';
@@ -26,6 +31,7 @@ const searchPhotos = e => {
   renderSearchPhotos();
 };
 
+//Function for reacting to events depending on the data received from the request
 const renderSearchPhotos = async () => {
   try {
     const photos = await fetchPhotos();
@@ -34,15 +40,9 @@ const renderSearchPhotos = async () => {
         Notify.success(`Hooray! We found ${photos.totalHits} images.`);
       }
       renderPhotoListItems(photos.hits);
-      console.log(currentPage);
+      // console.log(currentPage);
       if (currentPage >= 1) {
         loadMoreBtn.classList.add('is-visible');
-      }
-      if (Math.ceil(photos.totalHits / 40) === currentPage) {
-        Notify.failure(
-          "We're sorry, but you've reached the end of search results."
-        );
-        loadMoreBtn.classList.remove('is-visible');
       }
       currentPage += 1;
       totalHits = photos.totalHits;
@@ -63,7 +63,9 @@ const renderSearchPhotos = async () => {
   }
 };
 
+//Function for HTTP requests - used axios library,
 const fetchPhotos = async () => {
+  const API_KEY = '1424879-278d005ef871cdc02a09416fb';
   const params = new URLSearchParams({
     image_type: 'photo',
     orientation: 'horizontal',
@@ -80,8 +82,9 @@ const fetchPhotos = async () => {
   }
 };
 
+//Function to render on website searched photos
 function renderPhotoListItems(hits) {
-  console.log(hits);
+  // console.log(hits);
   const markup = hits
     .map(
       ({
@@ -125,8 +128,11 @@ function renderPhotoListItems(hits) {
     .join('');
   galleryWrapper.insertAdjacentHTML('beforeend', markup);
 
-  lightBox.refresh();
+  numberOfPicture = document.querySelectorAll('.photo-card');
 
+  lightBox.refresh(); //refresh display of large images (SimpleLightbox)
+
+  //Make smooth page scrolling
   if (currentPage >= 2) {
     const { height: cardHeight } = document
       .querySelector('.gallery')
@@ -139,17 +145,28 @@ function renderPhotoListItems(hits) {
   }
 }
 
+//Function to check end of rendered photos
+function checkEndOfHits() {
+  if (totalHits > numberOfPicture.length) {
+    renderSearchPhotos();
+  } else {
+    // console.log('stop!');
+    Notify.info(
+      "We're sorry, but you've reached the end of search results."
+    );
+    loadMoreBtn.classList.remove('is-visible');
+  }
+}
+
+//Events calls
 searchForm.addEventListener('submit', searchPhotos);
-loadMoreBtn.addEventListener('click', renderSearchPhotos);
+loadMoreBtn.addEventListener('click', checkEndOfHits);
 
 // window.addEventListener('scroll', () => {
 //   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
 
-//   if (
-//     scrollTop + clientHeight >= scrollHeight - 10 &&
-//     Math.ceil(totalHits / 40) >= currentPage
-//   ) {
-//     renderSearchPhotos();
-//     return;
+//   if (scrollTop + clientHeight > scrollHeight -5) {
+//     checkEndOfHits();
+//     return
 //   }
 // });

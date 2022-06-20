@@ -43,11 +43,11 @@ img {
     0px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
-.search-form{
+.search-form {
   display: flex;
   justify-content: center;
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 1px rgba(48, 48, 48, 0.14),
-    0px 2px 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12),
+    0px 1px 1px rgba(48, 48, 48, 0.14), 0px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
 .search-form > input {
@@ -70,8 +70,8 @@ img {
   align-items: center;
   justify-content: center;
   width: 46px;
+  cursor: pointer;
 }
-
 
 .load-more {
   display: none;
@@ -90,7 +90,7 @@ img {
   cursor: pointer;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 1px rgba(0, 0, 0, 0.14),
     0px 2px 1px rgba(0, 0, 0, 0.2);
-  transition: all 100ms linear;  
+  transition: all 100ms linear;
 }
 
 .load-more:hover {
@@ -112,7 +112,7 @@ img {
 }
 
 .photo-card {
-  width: 350px;  
+  width: 350px;
   /* height: 300px; */
 }
 
@@ -130,7 +130,7 @@ img {
 }
 
 .photo-card__image:hover {
-  transform: scale(1.1);  
+  transform: scale(1.1);
 }
 
 .submit-img {
@@ -142,6 +142,7 @@ img {
   justify-content: center;
   text-align: center;
   border: 1px solid #cfcfcf;
+  padding: 0 10px;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 1px rgba(0, 0, 0, 0.14),
@@ -149,7 +150,9 @@ img {
   letter-spacing: 0.02em;
 }
 
-.info-item{
+.info-item {
+  display: flex;
+  flex-direction: column;
   margin: 10px auto;
   letter-spacing: 0.02em;
 }
