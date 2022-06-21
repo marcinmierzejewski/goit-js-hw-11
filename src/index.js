@@ -7,7 +7,6 @@ import { Notify } from 'notiflix';
 
 //styles
 import './sass/index.scss';
-// import './css/styles.css';
 
 //Import library to display of large images for a full gallery.
 import SimpleLightbox from 'simplelightbox';
